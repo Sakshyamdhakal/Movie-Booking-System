@@ -24,14 +24,14 @@
         </form>
         </div> --}}
 
-<form  class="border w-100 h-fit flex flex-col bg-amber-100" method="POST" action="{{ route('movies.store', $movie) }}">
-    @csrf <!-- ✅ Very important for POST forms -->
-    <h1 class="font-mono text-3xl text-center">Your Movie:{{$movie->title}}</h1>
+<form  class="border w-100 h-fit flex flex-col bg-amber-100" method="POST" action="{{ route('movie.store', $movie->id) }}">
+    @csrf 
+    <h1 class="font-mono text-3xl text-center">Your Movie:{{$movie->name ?? 'Unknown'}}</h1>
     <label for="name" class="font-mono text-2xl">Name</label>
     <input class="h-fit p-4 bg-amber-50" type="text" placeholder="Enter name" name="name" required>
 
     <label for="email" class="font-mono text-2xl">Email</label>
-    <input class="h-fit p-4 bg-amber-50" type="email" placeholder="exampleemail@gmail.com" name="email" required>
+    <input class="h-fit p-4 bg-amber-50" type="email" placeholder="examplemail@gmail.com" name="email" required>
 
     <label for="seats" class="font-mono text-2xl">Seats</label>
     <input class="h-fit p-3 bg-amber-50" type="number" name="seats" min="1" required>

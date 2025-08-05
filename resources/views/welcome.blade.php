@@ -8,14 +8,28 @@
     <title>Document</title>
 </head>
 <body>
+                 @if(session('error'))
+    <div class="bg-red-500 text-white p-2 m-2 rounded">
+        {{ session('error') }}
+    </div>
+@endif
+
+@if(session('success'))
+    <div class="bg-green-400 text-white px-4 py-2 rounded m-2">
+        {{ session('success') }}
+    </div>
+@endif
+
+
     <nav class="block w-full max-w-screen-lg px-4 py-2 mx-auto bg-white bg-opacity-90 sticky top-3 shadow lg:px-8 lg:py-3 backdrop-blur-lg backdrop-saturate-150 z-[9999]">
   <div class="container flex flex-wrap items-center justify-between mx-auto text-slate-800">
     <a href="#"
       class="mr-4 block cursor-pointer py-1.5 text-base text-slate-800 font-semibold">
       Movie Booking System
     </a>
-    <input type="search" name="search" value="" placeholder="Search for Movies" class=" border border-gray-300 rounded-full py-2 pl-10 pr-4 focus:outline-none focus:ring-0.2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 shadow-sm"
->
+    <form action="{{ route('landingpage') }}">
+    <input type="search" name="search" value="{{ request('search') }}" placeholder="Search for Movies" class=" border border-gray-300 rounded-full py-2 pl-10 pr-4 focus:outline-none focus:ring-0.2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 shadow-sm">
+    </form>
     <div class="hidden lg:block">
       <ul class="flex flex-col gap-2 mt-2 mb-4 lg:mb-0 lg:mt-0 lg:flex-row lg:items-center lg:gap-6">
         <li class="flex items-center p-1 text-sm gap-x-2 text-slate-600">
@@ -28,8 +42,19 @@
           <a href="#" class="flex items-center">Schedule</a>
         </li>
         <li class="flex items-center p-1 text-sm gap-x-2 text-slate-600">
-          <a href="#" class="flex items-center bg-gray-500 p-2 text-white rounded-sm">Login</a>
-        </li>
+@if(Auth::check())
+    <form action="{{ route('logout') }}" method="POST">
+        @csrf
+        <button type="submit" class="bg-red-500 hover:cursor-pointer text-white px-4 py-2 rounded">
+            Logout
+        </button>
+    </form>
+@else
+    <a href="{{ route('login') }}" class="bg-green-500 text-white px-4 py-2 rounded">
+        Login
+    </a>
+@endif
+     </li>
       </ul>
     </div>
     <button
@@ -47,29 +72,12 @@
 <div class="flex align-middle justify-center mt-14 font-extrabold text-yellow-500 font-sans text-3xl border-b-2 border-zinc-500 ml-3 mr-3">
     <h1 class="mb-4">Movies</h1>
 </div>
-        {{-- @foreach($addmovie as $movie)
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 p-6">
-        @foreach($addmovie as $movie)
-  <div class="flex flex-col border-red-100">
-    <span  class="font-mono text-2xl mt-2.5">{{ $movie->name }}</span>
-        <span  class="font-mono text-2xl mt-2.5">{{ $movie->description }}</span>
-    <a class="hover:cursor-pointer p-3 rounded-2xl bg-amber-500 w-fit" href="{{ route('movies.book', $movie,$movie->name) }}">Book Now</a>
-  </div>
-@endforeach
-            <form action="{{route('addmovie.destroy',$movie->id)}}" method="post">
-            @csrf
-            @method('delete')
-            <button type="submit" class="hover:cursor-pointer">Delete</button>
-        </form>
-    </div>
-    
-@endforeach --}}
 
 
    <div class="p-6">
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 h-110">
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10 h-110">
         @forelse($addmovie as $movie)
-            <div class="bg-white hover:cursor-pointer rounded-xl shadow-md hover:shadow-2xl transition duration-300 max-w-sm mx-auto flex flex-col">
+            <div class="bg-white hover:cursor-pointer rounded-xl shadow-md hover:shadow-2xl transition duration-300 w-75 max-w-sm mx-auto flex flex-col">
                 <!-- Image -->
                 <div class="h-60 w-full">
                     <img src="{{ asset('storage/' . $movie->image) }}"
@@ -83,12 +91,20 @@
                     <span class="text-2xl text-yellow-400 font-semibold font-mono">Description</span>
                     <p class="text-gray-600 text-sm mb-4 line-clamp-8 h-40 overflow-hidden">{{ $movie->description }}</p>
 
-                    <form action="{{ route('movie.details', $movie->id) }}" method="POST" class="mt-auto">
+                    <div class="flex justify-between">
+                      <form action="{{ route('movie.details', $movie->id) }}" method="GET" class="mt-auto ">
                         @csrf
                         <button type="submit" class="hover:cursor-pointer bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">
                             See more
                         </button>
                     </form>
+                    <form action="{{ route('movies.book', $movie->id) }}" method="GET" class="mt-auto flex justify-between">
+                        @csrf
+                        <button type="submit" class="hover:cursor-pointer bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">
+                            Book
+                        </button>
+                    </form>
+                    </div>
                 </div>
             </div>
         @empty
