@@ -3,6 +3,8 @@
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\MovieController;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
 
 // Route::get('/',function(){
 //     return view('welcome');
@@ -12,21 +14,42 @@ use App\Http\Controllers\MovieController;
 // })->middleware(['auth', 'verified'])->name('dashboard');
 
 // Route::get('/dashboard',[MovieController::class,'showdashboard']);
-Route::get('/dashboard', [MovieController::class, 'showdashboard'])->middleware(['auth', 'verified'])->name('dashboard');
+// Route::get('/dashboard', [MovieController::class, 'showdashboard'])->middleware(['auth', 'verified','is_admin'])->name('dashboard');
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/dashboard', [MovieController::class, 'showdashboard'])->name('dashboard');
+});
+
 
 Route::middleware(['auth'])->group(function()
 {
     Route::get('/addmovies',[MovieController::class,'create'])->name('add.movies');
     Route::post('/submitmovie',[MovieController::class,'store']);
 });
-Route::get('/',[MovieController::class,'show']);
+
+Route::post('/custom-logout', function (Request $request) {
+    Auth::logout();
+
+    $request->session()->invalidate();
+    $request->session()->regenerateToken();
+
+    return redirect('/')->with('success', 'You have been logged out.');
+})->name('logout');
+
+
+Route::get('/',[MovieController::class,'index'])->name('landingpage');
+Route::post('store/{movie}',[MovieController::class,'storeuserdetails'])->name('movie.store');
+Route::get('/confirm/{movieid}',[MovieController::class,'confirmation'])->name('movie.confirm');
 Route::delete('/movies/{id}',[MovieController::class,'destroy'])->name('addmovie.destroy');
-Route::get('/details/{id}',function(){
+Route::get('details/{id}',function(){
     return view('details');
 })->name('movie.details');
-route::get('/book',function(){
-    return view('movies.book');
-})->name('movies.book');
+
+Route::post('/userlogin',[MovieController::class,'userlogin'])->name('user.login');
+Route::get('/userlogin',function(){
+    return view('login');
+})->name('user.login.form');
+
+Route::get('/book/{movieid}',[MovieController::class,'showform'])->name('movies.book');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -35,13 +58,3 @@ Route::middleware('auth')->group(function () {
 });
 
 require __DIR__.'/auth.php';
-
-
-Route::get('/paymentsuccess',function(){
-    return view('paymentsuccess');
-});
-
-
-Route::get('/paymentfailed',function(){
-    return view('paymentfailed');
-});

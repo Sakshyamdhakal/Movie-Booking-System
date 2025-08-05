@@ -15,20 +15,19 @@
         <p><strong>Seat</strong> {{$booking->seat}} </p>
         <a href="/">Back To HomePage</a> --}}
 
-        <div class="border font-sans w-fit h-fit flex flex-col p-5 pt-0.5 text-center m-auto mt-60 bg-amber-600/10">
-            <h1>Movie Ticket</h1>
-            <h1>Movie:{{ $booking->movie->title }}</h1>
-    <p>Name: {{ $booking->name }}</p>
-    <p>Email: {{ $booking->email }}</p>
-    <p>Seats: {{ $booking->seats }}</p>
-
-            </div>
+         <div class="border font-sans w-fit h-fit flex flex-col p-5 pt-0.5 text-center m-auto mt-60 bg-amber-600/10">
+        <h1>Movie Ticket</h1>
+        <h1>Movie: {{ $booking->movie->name ?? 'N/A' }}</h1>
+        <p>Name: {{ $booking->name }}</p>
+        <p>Email: {{ $booking->email }}</p>
+        <p>Seats: {{ $booking->seats }}</p>
+    </div>
     <div class="flex justify-center align-middle">
-        <form method="POST" action="{{ route('movies.destroy', $booking) }}">
+        <form method="POST" action="{{ route('addmovie.destroy', $booking) }}">
     @csrf @method('DELETE')
     <button type="submit" class="hover:cursor-pointer ml-5 hover:shadow-lg p-3">Delete Booking</button>
 </form>
-<a class="ml-5 hover:shadow-lg p-3" href="{{ route('movies.index') }}">Back to Movies</a>
+<a class="ml-5 hover:shadow-lg p-3" href="{{ route('landingpage') }}">Back to Movies</a>
 <a class="ml-5 hover:shadow-lg p-3" href="/bookings/{{$booking->id}}/edit">Edit/Update</a>
     </div>
 </body>
