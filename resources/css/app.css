@@ -1,3 +1,25 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Custom styles for improved look */
+@layer base {
+    body {
+        font-family: 'Figtree', sans-serif;
+        background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    }
+}
+
+@layer components {
+    .btn-primary {
+        @apply bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded shadow transition;
+    }
+
+    .card {
+        @apply bg-white rounded-lg shadow-md p-6;
+    }
+
+    .text-muted {
+        @apply text-gray-600;
+    }
+}
