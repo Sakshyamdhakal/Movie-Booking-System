@@ -4,12 +4,20 @@ namespace Database\Seeders;
 
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use Illuminate\Database\seeders\MovieSeeder;
-use Spatie\Permission\Models\Role;
+use Illuminate\Database\Seeder;
 
-// public function run()
-// {
-//     Role::create(['name' => 'admin']);
-//     Role::create(['name' => 'user']);
-// }
-
+class DatabaseSeeder extends Seeder
+{
+    /**
+     * Seed the application's database.
+     */
+    public function run(): void
+    {
+        $this->call([
+            MovieSeeder::class,
+            NewmovieSeeder::class,
+            MovieBookingSeeder::class,
+            RoleSeeder::class,
+        ]);
+    }
+}
