@@ -38,8 +38,10 @@ Route::post('/custom-logout', function (Request $request) {
 
 Route::get('/',[MovieController::class,'index'])->name('landingpage');
 Route::post('store/{movie}',[MovieController::class,'storeuserdetails'])->name('movie.store');
-Route::get('/confirm/{movieid}',[MovieController::class,'confirmation'])->name('movie.confirm');
+Route::get('/confirm/{bookingid}',[MovieController::class,'confirmation'])->name('movie.confirm');
 Route::delete('/movies/{id}',[MovieController::class,'destroy'])->name('addmovie.destroy');
+Route::delete('/bookings/{bookingId}',[MovieController::class,'destroyBooking'])->name('booking.destroy');
+Route::get('/ticket',[MovieController::class , 'showTicket'])->name('movie.ticket');
 Route::get('details/{id}',function(){
     return view('details');
 })->name('movie.details');

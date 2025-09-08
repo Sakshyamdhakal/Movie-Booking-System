@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="//unpkg.com/alpinejs" defer></script>
     <title>Movie Booking System</title>
     <style>
         .movie-card {
@@ -97,7 +98,11 @@
                     <a href="#" class="text-gray-700 hover:text-purple-600 font-medium transition">Bookings</a>
                     <a href="#" class="text-gray-700 hover:text-purple-600 font-medium transition">Schedule</a>
                     @if(Auth::check())
-                        <form action="{{ route('logout') }}" method="POST">
+                        
+                            <button  class="cursor-pointer bg-gradient-to-r from-green-500 to-teal-500 hover:from-green-600 hover:to-teal-600 text-white px-6 py-2 rounded-full font-semibold shadow-lg hover:shadow-xl transition transform hover:scale-105">
+                              <a href="{{route('movie.ticket')}}" >Your Ticket</a>
+                            </button>                        
+                            <form action="{{ route('logout') }}" method="POST">
                             @csrf
                             <button type="submit" class="cursor-pointer bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 text-white px-6 py-2 rounded-full font-semibold shadow-lg hover:shadow-xl transition transform hover:scale-105">
                                 Logout
