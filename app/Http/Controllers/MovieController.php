@@ -91,10 +91,10 @@ public function destroy($id)
     return redirect('/')->with('success', 'Movie deleted successfully!');
 }
   // Show the booking form for a movie
-    public function showForm(Newmovie $addmovie,$id)
+    public function showForm($movieid)
 
     {
-        $movie=Newmovie::findOrFail($id);
+        $movie=Newmovie::findOrFail($movieid);
         return view('movies.book', compact('movie'));
     }
 
@@ -106,25 +106,32 @@ public function storeUserdetails(Request $request, $movieid)
         'seats'  => 'required|integer|min:1'
     ]);
 
+    $movie = Newmovie::findOrFail($movieid);
+
     $booking=MovieBooking::create([
         'name'     => $request->name,
         'email'    => $request->email,
         'seats'    => $request->seats,
         'movie_id' => $movieid,
+        'movie'    => $movie->name,
+        'user_id'  => auth()->id(),
     ]);
-        $booking = MovieBooking::with('movie')->findOrFail($movieid);
         //pending
         // Mail::to($booking->email)->send(new BookingConfirmationMail($booking));
 
-    return redirect()->route('movie.confirm');
+    return redirect()->route('movie.confirm', ['bookingid' => $booking->id]);
 }
 
-public function confirmation($movieid)
+public function confirmation($bookingid)
 {
-    $booking = MovieBooking::with('movie')->findOrFail($movieid);
+    $booking = MovieBooking::with('movie')->findOrFail($bookingid);
     return view('movies.confirmation', compact('booking'));
 }
 
+public function showTicket(){
+    $bookings = MovieBooking::where('user_id', auth()->id())->get();
+    return view('movies.user_bookings', compact('bookings'));
+}
 
     public function userlogin(Request $request)
 {
@@ -147,23 +154,15 @@ public function confirmation($movieid)
     return redirect('/')->with('success', 'Account created!');
 }
 
+    public function destroyBooking($bookingId)
+    {
+        $booking = MovieBooking::findOrFail($bookingId);
+        $booking->delete();
+
+        return redirect()->route('landingpage')->with('success', 'Booking deleted.');
+    }
+
 }
-
-
-
-  
-
-
-
-
-//     // Delete booking
-//     public function destroy($bookingId)
-//     {
-//         $booking = MovieBooking::findOrFail($bookingId);
-//         $booking->delete();
-
-//         return redirect()->route('movies.index')->with('success', 'Booking deleted.');
-//     }
 
 //     public function edit(MovieBooking $booking)
 //     {

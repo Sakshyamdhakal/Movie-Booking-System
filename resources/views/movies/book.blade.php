@@ -4,40 +4,135 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-        <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <title>Book</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="//unpkg.com/alpinejs" defer></script>
+    <title>Book Movie Ticket - {{ $movie->name ?? 'Movie Booking' }}</title>
+    <style>
+        .booking-form {
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+        }
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .hero-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            min-height: 40vh;
+        }
+        .floating-animation {
+            animation: float 6s ease-in-out infinite;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+    </style>
 </head>
-<body>
-                    {{-- <h1 class="font-candara text-center">FILL THE FORM BELOW</h1>
-        <div class="flex items-center justify-center">
-            <form method="POST" class="w-100 h-fit font-sans border p-3 ">
-            {{-- action="{{ route('movies.book', $movie->id) }}"> --}}
-            {{-- <label for="name" required>Name</label>
-            <input type="text" name="name" class="border p-2 w-full mb-3">
+<body class="bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 min-h-screen">
+    <!-- Hero Section -->
+    <div class="hero-section relative overflow-hidden">
+        <div class="absolute h-fit inset-0 bg-gradient-to-br from-black via-gray-900 to-black opacity-40"></div>
+        <div class="absolute inset-0" style="background-image: url('{{ asset('storage/' . $movie->image) }}'); background-size: cover; background-position: center; opacity: 0.3;"></div>
+        <div class="relative z-10 mx-auto px-4 py-16">
+            <div class="text-center text-white">
+                <h1 class="text-5xl font-bold mb-4 floating-animation">
+                    Book Your Ticket
+                </h1>
+            </div>
+        </div>
+    </div>
 
-            <label for="email" required>E-mail</label>
-            <input type="email" name="email" class="border p-2 w-full mb-3">
+    <!-- Booking Form -->
+    <div class="max-w-2xl mx-auto px-4 py-12">
+        <div class="booking-form rounded-3xl shadow-2xl overflow-hidden">
+            <div class="gradient-bg px-8 py-6">
+                <h2 class="text-3xl font-bold text-white text-center">Complete Your  Booking</h2>
+            </div>
 
-            <label for="seats">Seats</label>
-            <input type="number" min="1" required>
-            <button class="bg-gray-400 p-2 text-3xl cursor-pointer rounded-3xl"> <a href="/confirmation">Confirm booking</a> </button>
-        </form>
-        </div> --}}
+            <form method="POST" action="{{ route('movie.store', $movie->id) }}" class="px-8 py-8">
+                @csrf
+                <div class="mb-6">
+                    
+                    <label for="name" class="block text-gray-700 text-lg font-semibold mb-2">
+                            Movie Name<span class="text-red-500"></span>
+                    </label>
+                    <input
+                        type="text"
+                        id="name"
+                        name="name"
+                        placeholder="{{$movie->name}}"
+                        readOnly
+                        class="w-full px-4 py-3 border-2 border-blue-300 bg-blue-100/50 text-gray-600 rounded-xl"
+                        required
+                    >
+                    
+                </div>
+                <div class="mb-6">
+                    
+                    <label for="name" class="block text-gray-700 text-lg font-semibold mb-2">
+                        Full Name <span class="text-red-500">*</span>
+                    </label>
+                    <input
+                        type="text"
+                        id="name"
+                        name="name"
+                        placeholder="Enter your full name"
+                        class="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:border-purple-500 focus:ring-4 focus:ring-purple-200 transition-all duration-300"
+                        required
+                    >
+                    
+                </div>
+                <!-- Email Field -->
+                <div class="mb-6">
+                    <label for="email" class="block text-gray-700 text-lg font-semibold mb-2">
+                        Email Address <span class="text-red-500">*</span>
+                    </label>
+                    <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        placeholder="your.email@example.com"
+                        class="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:border-purple-500 focus:ring-4 focus:ring-purple-200 transition-all duration-300"
+                        required
+                    >
+                </div>
 
-<form  class="border w-100 h-fit flex flex-col bg-amber-100" method="POST" action="{{ route('movie.store', $movie->id) }}">
-    @csrf 
-    <h1 class="font-mono text-3xl text-center">Your Movie:{{$movie->name ?? 'Unknown'}}</h1>
-    <label for="name" class="font-mono text-2xl">Name</label>
-    <input class="h-fit p-4 bg-amber-50" type="text" placeholder="Enter name" name="name" required>
+                <!-- Seats Field -->
+                <div class="mb-8">
+                    <label for="seats" class="block text-gray-700 text-lg font-semibold mb-2">
+                        Number of Seats <span class="text-red-500">*</span>
+                    </label>
+                    <input
+                        type="number"
+                        id="seats"
+                        name="seats"
+                        min="1"
+                        max="10"
+                        placeholder="1"
+                        class="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:border-purple-500 focus:ring-4 focus:ring-purple-200 transition-all duration-300"
+                        required
+                    >
+                </div>
 
-    <label for="email" class="font-mono text-2xl">Email</label>
-    <input class="h-fit p-4 bg-amber-50" type="email" placeholder="examplemail@gmail.com" name="email" required>
+                <!-- Submit Button -->
+                <div class="text-center">
+                    <button
+                        type="submit"
+                        class="bg-gradient-to-r from-green-500 to-teal-500 hover:from-green-600 hover:to-teal-600 text-white px-12 py-4 rounded-full font-bold text-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+                    >
+                        🎟️ Confirm Booking
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
 
-    <label for="seats" class="font-mono text-2xl">Seats</label>
-    <input class="h-fit p-3 bg-amber-50" type="number" name="seats" min="1" required>
-
-    <button type="submit" class="hover:cursor-pointer p-3 rounded-2xl bg-amber-500 m-auto">Confirm Booking</button>
-</form>
-
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-8 mt-12">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <p class="text-gray-500">&copy; 2024 Movie Booking System. All rights reserved.</p>
+        </div>
+    </footer>
 </body>
 </html>
