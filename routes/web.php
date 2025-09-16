@@ -41,6 +41,8 @@ Route::post('store/{movie}',[MovieController::class,'storeuserdetails'])->name('
 Route::get('/confirm/{bookingid}',[MovieController::class,'confirmation'])->name('movie.confirm');
 Route::delete('/movies/{id}',[MovieController::class,'destroy'])->name('addmovie.destroy');
 Route::delete('/bookings/{bookingId}',[MovieController::class,'destroyBooking'])->name('booking.destroy');
+Route::get('/edit/{booking}',[MovieController::class,'edit'])->name('booking.edit');
+Route::post('/bookings/{booking}',[MovieController::class,'update'])->name('movies.update');
 Route::get('/ticket',[MovieController::class , 'showTicket'])->name('movie.ticket');
 Route::get('details/{id}',function(){
     return view('details');

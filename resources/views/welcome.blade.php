@@ -27,6 +27,7 @@
         .floating-animation {
             animation: float 6s ease-in-out infinite;
         }
+        
         @keyframes float {
             0%, 100% { transform: translateY(0px); }
             50% { transform: translateY(-10px); }
@@ -58,7 +59,7 @@
                 Discover amazing movies and book your tickets instantly
             </p>
             <div class="flex justify-center gap-4">
-                <a href="#movies" class="bg-yellow-500 hover:bg-yellow-600 text-black px-8 py-3 rounded-full font-semibold transition transform hover:scale-105">
+                <a href="#movies" class="bg-gradient-to-r from-yellow-500 to-yellow-700 hover:bg-yellow-700 text-black px-8 py-3 border-2 border-yellow-500 rounded-full font-semibold transition transform hover:scale-105">
                     Explore Movies
                 </a>
                 @if(!Auth::check())
@@ -72,7 +73,7 @@
     </div>
 
     <!-- Navigation -->
-    <nav class="sticky top-0 z-50 bg-black bg-opacity-95 backdrop-blur-lg shadow-lg">
+    <nav class="sticky top-0 z-50 bg-gray-900 bg-opacity-95 backdrop-blur-lg shadow-lg">
         <div class="max-w-7xl mx-auto px-4 py-4 flex flex-wrap items-center justify-between">
             <a href="#" class="text-2xl font-bold text-yellow-400">
                 🎭 SDBS
@@ -82,7 +83,7 @@
                 <div class="relative">
                     <input type="search" name="search" value="{{ request('search') }}"
                            placeholder="Search amazing movies..."
-                           class="w-full bg-black border border-yellow-500 text-yellow-300 rounded-full py-3 px-10 pr-12 focus:outline-none focus:border-yellow-400 focus:ring-2 focus:ring-yellow-400 transition-all duration-300">
+                           class="w-full bg-black border border-yellow-500 text-yellow-300 rounded-full py-3 px-10 pr-12 focus:outline-none focus:border-yellow-400 focus:ring-2 focus:ring-yellow-400 transition-all duration-500" />
                     <button type="submit" class="absolute right-3 top-1/2 transform -translate-y-1/2 text-yellow-300 hover:text-yellow-400">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
@@ -92,15 +93,15 @@
             </form>
 
             <div class="hidden lg:flex items-center justify-center gap-6">
-                <a href="#movies" class="text-yellow-400 hover:text-yellow-300 hover:border-b font-medium transition pb-3">Movies</a>
-                <a href="#" class="text-yellow-400 hover:text-yellow-300 hover:border-b font-medium transition pb-3">Bookings</a>
-                <a href="#" class="text-yellow-400 hover:text-yellow-300 hover:border-b pb-3 font-medium transition">Schedule</a>
+                <a href="#movies" class="text-yellow-500 hover:text-yellow-600 hover:border-b font-medium transition-all pb-3">Movies</a>
+                <a href="#" class="text-yellow-500 hover:text-yellow-600 hover:border-b font-medium transition pb-3">Bookings</a>
+                <a href="#" class="text-yellow-500 hover:text-yellow-600 hover:border-b pb-3 font-medium transition">Schedule</a>
                 @if(Auth::check())
-                    <button class="cursor-pointer hover:bg-yellow-500 hover:text-black bg-black text-yellow-600 border border-yellow-400 text-black px-6 py-2 rounded-full font-semibold shadow-lg hover:shadow-xl transition transform hover:scale-105">
+                    <button class="cursor-pointer hover:bg-gradient-to-r from-yellow-500 to-yellow-700 hover:text-black bg-black text-yellow-600 border border-yellow-400 text-black px-6 py-2 rounded-full font-semibold shadow-lg hover:shadow-xl transition transform hover:scale-105">
                         <a href="{{route('movie.ticket')}}">Your Ticket</a>
                     </button>
                       @if (auth()->user()->role== 'admin')
-                        <a href="/dashboard" class="cursor-pointer hover:bg-yellow-500 hover:text-black bg-black text-yellow-600 border border-yellow-400 text-black px-6 py-2 rounded-full font-semibold shadow-lg hover:shadow-xl transition transform hover:scale-105">
+                        <a href="/dashboard" class="cursor-pointer hover:bg-gradient-to-r from-yellow-500 to-yellow-700 hover:text-black bg-black text-yellow-600 border border-yellow-400 text-black px-6 py-2 rounded-full font-semibold shadow-lg hover:shadow-xl transition transform hover:scale-105">
                             Go to Dashboard
                         </a>
                     @endif
