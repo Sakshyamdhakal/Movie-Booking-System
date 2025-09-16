@@ -159,26 +159,26 @@ public function showTicket(){
         $booking = MovieBooking::findOrFail($bookingId);
         $booking->delete();
 
-        return redirect()->route('landingpage')->with('success', 'Booking deleted.');
+        return redirect()->route('landingpage')->with('success', 'Booking Cancelled.');
     }
 
+
+
+    public function edit(MovieBooking $booking)
+    {
+        return view('movies.edit',compact('booking'));
+    }
+
+    public function update(Request $request ,MovieBooking $bookingid)
+    {
+        $data=$request->validate([
+            'name'=> 'required',
+            'email'=>'required|email',
+            'seats'=> 'required|integer|min:1'
+        ]);
+        $bookingid->update($data);
+
+        return redirect()->route('movies.confirm');
+    }
 }
-
-//     public function edit(MovieBooking $booking)
-//     {
-//             return view('movies.edit',compact('booking'));
-//     }
-
-//     public function update(Request $request ,MovieBooking $bookingid)
-//     {
-//         $data=$request->validate([
-//             'name'=> 'required',
-//             'email'=>'required|email',
-//             'seats'=> 'required|integer|min:1'
-//         ]);
-//         $bookingid->update($data);
-
-//         return redirect()->route('movies.confirm');
-//     }
-// 
 
