@@ -19,16 +19,6 @@ use Illuminate\Support\Facades\Mail;
 class MovieController extends Controller
 {
 
-    //  public function index(Request $request)
-    // {
-    //     $query=Newmovie::query();
-    //     if($request->has('search')){
-    //         $query->where('name','like','%'. $request->search . '%');
-    //     }
-    //         $addmovie=$query->get();
-    //     return view('welcome',compact('addmovie'));
-    // }
-
 public function index(Request $request)
 {
     if (!Auth::check()) {
@@ -54,17 +44,25 @@ public function create(){
 
 public function store(Request $request)
 {
-            $request->validate([
-             'name'   => 'required|string|max:255',
-             'description'  => 'nullable|string',
-             'image'=> 'required|mimes:jpg,png,jpeg|max:2048',
-         ]);
+    $request->validate([
+        'name' => 'required|string|max:255',
+        'description' => 'nullable|string',
+        'image' => 'required|mimes:jpg,png,jpeg|max:2048',
+    ]);
 
-          NewMovie::create([
-            'name' => $request->name,
-            'description' => $request->description,
-        ]);
-                return redirect('/')->with('success', 'Movie added successfully!');
+    $data = [
+        'name' => $request->name,
+        'description' => $request->description,
+    ];
+
+    if ($request->hasFile('image')) {
+        $imageName = time() . '.' . $request->image->extension();
+        $request->image->move(public_path('images'), $imageName);
+        $data['image'] = $imageName;
+    }
+
+    NewMovie::create($data);
+    return redirect('/')->with('success', 'Movie added successfully!');
 }
 
 public function show(Request $request)
@@ -179,6 +177,49 @@ public function showTicket(){
         $bookingid->update($data);
 
         return redirect()->route('movies.confirm');
+    }
+
+    public function editMovie($id)
+    {
+        if (!Auth::check() || auth()->user()->role !== 'admin') {
+            return redirect('/')->with('error', 'Access Denied.');
+        }
+        $movie = Newmovie::findOrFail($id);
+        return view('movies.edit', compact('movie'));
+    }
+
+    public function updateMovie(Request $request, $id)
+    {
+        if (!Auth::check() || auth()->user()->role !== 'admin') {
+            return redirect('/')->with('error', 'Access Denied.');
+        }
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'image' => 'nullable|mimes:jpg,png,jpeg,avif,webp|max:2048',
+        ]);
+
+        $movie = Newmovie::findOrFail($id);
+
+        $data = [
+            'name' => $request->name,
+            'description' => $request->description,
+        ];
+
+        if ($request->hasFile('image')) {
+            $imageName = time() . '.' . $request->image->extension();
+            $request->image->move(public_path('images'), $imageName);
+            $data['image'] = $imageName;
+        }
+
+        $movie->update($data);
+
+        return redirect('/dashboard')->with('success', 'Movie updated successfully!');
+    }
+
+    public function details($id){
+        $movie = Newmovie::findOrFail($id);
+        return view('details' , compact('movie'));
     }
 }
 
