@@ -102,8 +102,12 @@
                     <div class="bg-black rounded-xl shadow-md p-6 mb-6 hover:shadow-lg transition-shadow border border-gray-700">
                         <div class="flex flex-col md:flex-row md:items-center justify-between">
                             <div class="flex-1 mb-4 md:mb-0 text-yellow-500">
-                                <h3 class="text-xl font-bold mb-2">{{ $movie->name }}</h3>
+                               <div class="w-20">
+                                 <h3 class="text-xl font-bold mb-2">{{ $movie->name }}</h3>
+                                <img src="{{ asset('images/' . $movie->image) }}" alt="Current Image" class="max-w-xs max-h-96 object-cover rounded-lg shadow-lg mx-auto border-2 border-yellow-500 mb-10">
+                               </div>
                                 <p class="mb-3 line-clamp-2 text-gray-300">{{ $movie->description }}</p>
+                                
                                 <div class="flex items-center gap-4 text-sm text-gray-400">
                                     <span class="flex items-center">
                                         <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -114,7 +118,7 @@
                                 </div>
                             </div>
                             <div class="flex gap-3">
-                                <a href="/edit/{{$movie->id}}"
+                                <a href="{{ route('movies.edit', $movie->id) }}"
                                    class="bg-gradient-to-r from-yellow-400 to-yellow-600 hover:from-yellow-500 hover:to-yellow-700 text-black font-semibold py-2 px-4 rounded-lg transition transform hover:scale-105 flex items-center">
                                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>

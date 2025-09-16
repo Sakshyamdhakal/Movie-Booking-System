@@ -80,7 +80,7 @@
                 @csrf
                 
                 <!-- Movie Name Field (Read-only) -->
-                <div class="mb-6">
+                <div class="mb-6 group">
                     <label for="movie_name" class="block text-yellow-400 text-lg font-semibold mb-3 flex items-center">
                         <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 4V2a1 1 0 011-1h3a1 1 0 011 1v2h3a1 1 0 011 1v3a1 1 0 01-1 1h-1v9a2 2 0 01-2 2H8a2 2 0 01-2-2V9H5a1 1 0 01-1-1V5a1 1 0 011-1h2z"></path>
@@ -92,9 +92,9 @@
                         id="movie_name"
                         value="{{ $movie->name }}"
                         readonly
-                        class="readonly-field w-full px-4 py-3 rounded-lg font-semibold text-lg"
+                        class="readonly-field w-full px-4 py-3 rounded-lg text-yellow-100 font-semibold text-lg cursor-not-allowed"
                     >
-                    <p class="text-gray-400 text-sm mt-1">Selected movie cannot be changed</p>
+                    <p class="text-red-400 text-sm mt-1 opacity-0 group-hover:opacity-100 transition">Selected movie cannot be changed</p>
                 </div>
 
                 <!-- Full Name Field -->
@@ -164,9 +164,9 @@
                 <div class="text-center space-y-4">
                     <button
                         type="submit"
-                        class="bg-gradient-to-r from-yellow-400 to-yellow-600 hover:from-yellow-500 hover:to-yellow-700 text-black px-12 py-4 rounded-lg font-bold text-lg shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center mx-auto"
+                        class="bg-gradient-to-r from-yellow-400 to-yellow-600 hover:from-yellow-500 hover:to-yellow-700 text-black px-12 py-4 rounded-lg font-bold text-lg shadow-lg hover:shadow-xl cursor-pointer hover:scale-102 flex items-center justify-center mx-auto"
                     >
-                        <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" class="text-white" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                         </svg>
                         Confirm Booking
@@ -190,17 +190,16 @@
             <div class="flex items-center justify-between">
                 <div class="flex items-center space-x-4">
                     @if($movie->image)
-                        <img src="{{ asset('storage/' . $movie->image) }}" 
-                             alt="{{ $movie->name }}" 
-                             class="w-16 h-16 object-cover rounded-lg border border-gray-600">
+                    <img src="{{ asset('images/' . $movie->image) }}" alt="Current Image" class="max-w-xs max-h-20 object-cover rounded-lg shadow-lg border-2 border-yellow-500">
+
                     @else
                         <div class="w-16 h-16 bg-gray-700 rounded-lg flex items-center justify-center">
                             <span class="text-2xl">🎬</span>
                         </div>
                     @endif
-                    <div>
+                    <div class="w-100">
                         <h3 class="text-xl font-bold text-white">{{ $movie->name }}</h3>
-                        <p class="text-gray-400 line-clamp-2">{{ $movie->description ?? 'Experience the magic of cinema' }}</p>
+                        <p class="text-gray-400 line-clamp-2 w-full">{{ $movie->description ?? 'Experience the magic of cinema' }}</p>    
                     </div>
                 </div>
                 <div class="hidden md:block">

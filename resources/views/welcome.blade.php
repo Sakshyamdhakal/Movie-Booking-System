@@ -25,13 +25,14 @@
             min-height: 60vh;
         }
         .floating-animation {
-            animation: float 6s ease-in-out infinite;
+            animation: float 4s ease-in-out infinite;
         }
         
         @keyframes float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
-        }
+          0% { transform: translateY(0px); }
+          50% { transform: translateY(-10px); }
+          100% { transform: translateY(0px); }
+}
     </style>
 </head>
 <body class="min-h-screen bg-black text-white">
@@ -49,28 +50,62 @@
 
     <!-- Hero Section -->
     <div class="hero-section relative overflow-hidden">
-        <div class="absolute inset-0 bg-gradient-to-br from-black via-gray-900 to-black opacity-70"></div>
-        <div class="absolute inset-0" style="background-image: url('https://collider.com/wp-content/uploads/inception_movie_poster_banner_01.jpg'); background-size: cover; background-position: center; opacity: 0.2;"></div>
-        <div class="relative z-10 max-w-7xl mx-auto px-4 py-20 text-center">
-            <h1 class="text-6xl font-bold mb-6 floating-animation text-yellow-400">
-                Book Your Favourite Movie from below!
-            </h1>
-            <p class="text-xl mb-8 opacity-90 text-gray-300">
-                Discover amazing movies and book your tickets instantly
-            </p>
-            <div class="flex justify-center gap-4">
-                <a href="#movies" class="bg-gradient-to-r from-yellow-500 to-yellow-700 hover:bg-yellow-700 text-black px-8 py-3 border-2 border-yellow-500 rounded-full font-semibold transition transform hover:scale-105">
-                    Explore Movies
-                </a>
-                @if(!Auth::check())
-                    <a href="{{ route('login') }}" class="bg-yellow-800 bg-opacity-20 hover:bg-opacity-40 text-yellow-300 px-8 py-3 rounded-full font-semibold transition backdrop-blur-sm">
-                        Get Started
-                    </a>
-                @endif
-            </div>
-        </div>
-        <div class="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-black to-transparent"></div>
+    <!-- Dark gradient overlay -->
+    <div class="absolute inset-0 bg-gradient-to-br from-black via-gray-900 to-black opacity-80"></div>
+
+    <!-- Background movie poster -->
+    <div class="absolute inset-0" 
+        style="background-image: url('https://collider.com/wp-content/uploads/inception_movie_poster_banner_01.jpg'); 
+               background-size: cover; 
+               background-position: center; 
+               opacity: 0.25;">
     </div>
+
+    <!-- Subtle spotlight glow behind text -->
+    <div class="absolute inset-0 flex items-center justify-center">
+        <div class="w-96 h-96 bg-yellow-500 rounded-full blur-3xl opacity-10"></div>
+    </div>
+
+    <!-- Content -->
+    <div class="relative z-10 max-w-7xl mx-auto px-4 py-28 text-center">
+        <h1 class="text-6xl md:text-7xl font-extrabold font-mono mb-6 floating-animation text-yellow-400 drop-shadow-[0_0_20px_rgba(0,0,0,0.9)]">
+            Book Your Favourite Movie Ticket 🎥
+        </h1>
+        <p class="text-xl md:text-2xl mb-10 text-gray-300 opacity-90 drop-shadow-[0_0_10px_black]">
+            Discover amazing movies and book your tickets instantly
+        </p>
+
+        <!-- Buttons -->
+        <div class="flex justify-center gap-6">
+            <a href="#movies" 
+               class="bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-700 hover:from-yellow-500 hover:to-yellow-800 text-black px-10 py-4 border-2 border-yellow-500 rounded-full font-bold transition-all transform hover:scale-110 shadow-lg shadow-black">
+                🎬 Explore Movies
+            </a>
+            @if(!Auth::check())
+                <a href="{{ route('login') }}" 
+                   class="bg-black/40 hover:bg-black/60 text-yellow-300 px-10 py-4 rounded-full font-semibold transition backdrop-blur-md shadow-lg shadow-black">
+                    🚀 Get Started
+                </a>
+            @endif
+        </div>
+    </div>
+
+    <!-- Bottom black fade -->
+    <div class="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-black to-transparent"></div>
+</div>
+
+<!-- Floating Animation -->
+<style>
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+  100% { transform: translateY(0px); }
+}
+.floating-animation {
+  animation: float 4s ease-in-out infinite;
+}
+</style>
+
 
     <!-- Navigation -->
     <nav class="sticky top-0 z-50 bg-gray-900 bg-opacity-95 backdrop-blur-lg shadow-lg">
@@ -133,11 +168,11 @@
                     <div class="movie-card rounded-2xl shadow-xs overflow-hidden transition-all duration-500 group">
                         <!-- Image -->
                         <div class="relative h-72 overflow-hidden">
-                            <img src="{{ asset('storage/' . $movie->image) }}"
+                            <img src="{{ asset('images/' . $movie->image) }}"
                                  alt="{{ $movie->name }}"
                                  class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
                             <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                            <div class="absolute bottom-4 left-4 right-4 text-yellow-400 transform translate-y-full group-hover:translate-y-0 transition-transform duration-300">
+                            <div class="absolute bottom-0 left-4 right-4 text-yellow-400 transform translate-y-full group-hover:translate-y-0 transition-transform duration-300">
                                 <h3 class="text-lg font-bold">{{ $movie->name }}</h3>
                             </div>
                         </div>
@@ -145,18 +180,18 @@
                         <!-- Content -->
                         <div class="p-6">
                             <h3 class="text-xl font-bold text-yellow-400 mb-3 group-hover:text-yellow-300 transition">{{ $movie->name }}</h3>
-                            <p class="text-gray-300 text-sm mb-6 line-clamp-3 leading-relaxed">{{ $movie->description }}</p>
+                            <p class="text-gray-300 text-sm mb-6 h-17 line-clamp-3 leading-relaxed">{{ $movie->description }}</p>
 
                             <div class="flex gap-3">
                                 <form action="{{ route('movie.details', $movie->id) }}" method="GET" class="flex-1">
                                     @csrf
-                                    <button type="submit" class="w-full bg-yellow-500 hover:bg-yellow-600 text-black py-3 px-4 rounded-xl font-semibold shadow-lg hover:shadow-xl transition transform hover:scale-105">
+                                    <button type="submit" class="w-full cursor-pointer bg-yellow-500 hover:bg-yellow-600 text-black py-3 px-4 rounded-xl font-semibold shadow-lg hover:shadow-xl transition transform hover:scale-105">
                                         Details
                                     </button>
                                 </form>
                                 <form action="{{ route('movies.book', $movie->id) }}" method="GET" class="flex-1">
                                     @csrf
-                                    <button type="submit" class="flex gap-3 items-center justify-center w-fit bg-yellow-500 hover:bg-yellow-600 text-black py-3 px-4 rounded-xl font-semibold shadow-lg hover:shadow-xl transition transform hover:scale-105">
+                                    <button type="submit" class="flex gap-3 items-center cursor-pointer justify-center w-fit bg-yellow-500 hover:bg-yellow-600 text-black py-3 px-4 rounded-xl font-semibold shadow-lg hover:shadow-xl transition transform hover:scale-105">
                                         Book Now
                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
                                             <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
