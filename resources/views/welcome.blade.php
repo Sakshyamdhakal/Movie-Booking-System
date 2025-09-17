@@ -132,8 +132,9 @@
                 <a href="#" class="text-yellow-500 hover:text-yellow-600 hover:border-b font-medium transition pb-3">Bookings</a>
                 <a href="#" class="text-yellow-500 hover:text-yellow-600 hover:border-b pb-3 font-medium transition">Schedule</a>
                 @if(Auth::check())
-                    <button class="cursor-pointer hover:bg-gradient-to-r from-yellow-500 to-yellow-700 hover:text-black bg-black text-yellow-600 border border-yellow-400 text-black px-6 py-2 rounded-full font-semibold shadow-lg hover:shadow-xl transition transform hover:scale-105">
+                    <button class="cursor-pointer relative flex gap-1 hover:bg-gradient-to-r from-yellow-500 to-yellow-700 hover:text-black bg-black text-yellow-600 border border-yellow-400 text-black px-6 py-2 rounded-full font-semibold shadow-lg hover:shadow-xl transition transform hover:scale-105">
                         <a href="{{route('movie.ticket')}}">Your Ticket</a>
+                        <div class="w-5 h-5 top-0 right-0 bg-red-600 absolute flex items-center justify-center rounded-full"> <p class="text-white">{{$totalBookings}}</p> </div>
                     </button>
                       @if (auth()->user()->role== 'admin')
                         <a href="/dashboard" class="cursor-pointer hover:bg-gradient-to-r from-yellow-500 to-yellow-700 hover:text-black bg-black text-yellow-600 border border-yellow-400 text-black px-6 py-2 rounded-full font-semibold shadow-lg hover:shadow-xl transition transform hover:scale-105">

@@ -26,7 +26,8 @@ public function index(Request $request)
     }
 
     $user=Auth::user(); 
-
+    $userId = auth()->id();
+    $totalBookings = MovieBooking::where('user_id', $userId)->count();
     $query = Newmovie::query();
 
     if ($request->has('search')) {
@@ -35,7 +36,7 @@ public function index(Request $request)
 
     $addmovie = $query->get();
 
-    return view('welcome', compact('addmovie'));
+    return view('welcome', compact(['addmovie' , 'totalBookings']));
 }
 
 public function create(){
