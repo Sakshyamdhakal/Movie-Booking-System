@@ -134,7 +134,7 @@
                 @if(Auth::check())
                     <button class="cursor-pointer relative flex gap-1 hover:bg-gradient-to-r from-yellow-500 to-yellow-700 hover:text-black bg-black text-yellow-600 border border-yellow-400 text-black px-6 py-2 rounded-full font-semibold shadow-lg hover:shadow-xl transition transform hover:scale-105">
                         <a href="{{route('movie.ticket')}}">Your Ticket</a>
-                        <div class="w-5 h-5 top-0 right-0 bg-red-600 absolute flex items-center justify-center rounded-full"> <p class="text-white">{{$totalBookings}}</p> </div>
+                        <div class="w-5 h-5 top-0 right-0 bg-yellow-600 absolute flex items-center justify-center rounded-full"> <p class="text-white">{{$totalBookings}}</p> </div>
                     </button>
                       @if (auth()->user()->role== 'admin')
                         <a href="/dashboard" class="cursor-pointer hover:bg-gradient-to-r from-yellow-500 to-yellow-700 hover:text-black bg-black text-yellow-600 border border-yellow-400 text-black px-6 py-2 rounded-full font-semibold shadow-lg hover:shadow-xl transition transform hover:scale-105">
@@ -184,7 +184,7 @@
         @click="active = !active"
         xmlns="http://www.w3.org/2000/svg" 
         viewBox="0 0 24 24" 
-        :fill="active ? 'gold' : 'gray'" 
+        :fill="active ? 'gold' : 'white'" 
         class="w-10 h-10 transition transform hover:scale-110">
         <path d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.518 
         4.674a1 1 0 00.95.69h4.905c.969 
