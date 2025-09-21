@@ -174,8 +174,6 @@
                             <!-- Booking Status -->
                             <div class="flex items-center justify-between">
                                 <div class="flex items-center space-x-3">
-                                    <div class="w-3 h-3 bg-green-400 rounded-full"></div>
-
                                     @php
     $today = \Carbon\Carbon::today();
     $bookingDate = \Carbon\Carbon::parse($booking->created_at);

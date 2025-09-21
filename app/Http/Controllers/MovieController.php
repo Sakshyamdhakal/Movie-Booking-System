@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use phpDocumentor\Reflection\Types\Null_;
 use App\Mail\BookingConfirmationMail;
+use App\Models\Favorite;
 use Illuminate\Support\Facades\Mail;
 
 class MovieController extends Controller
@@ -27,6 +28,7 @@ public function index(Request $request)
 
     $user=Auth::user(); 
     $userId = auth()->id();
+    $today = \Carbon\Carbon::today();
     $totalBookings = MovieBooking::where('user_id', $userId)->count();
     $query = Newmovie::query();
 
@@ -128,7 +130,7 @@ public function confirmation($bookingid)
 }
 
 public function showTicket(){
-    $bookings = MovieBooking::where('user_id', auth()->id())->get();
+    $bookings = MovieBooking::where('user_id', auth()->id())->latest()->get();
     return view('movies.user_bookings', compact('bookings'));
 }
 
@@ -221,6 +223,38 @@ public function showTicket(){
     public function details($id){
         $movie = Newmovie::findOrFail($id);
         return view('details' , compact('movie'));
+    }
+
+
+
+    public function toggleFavorite($movieId){
+        
+         $userId = auth()->id();
+
+        $existing = Favorite::where('user_id', $userId)
+                        ->where('movie_id', $movieId)
+                        ->first();
+
+        if ($existing) {
+        $existing->delete();
+        return response()->json(['status' => 'removed']);
+        } else {
+        Favorite::create([
+            'user_id' => $userId,
+            'movie_id' => $movieId,
+        ]);
+        return response()->json(['status' => 'added']);
+        }
+
+    }
+
+    public function favorites(){
+        $favorites = Favorite::with('movie')
+                        ->where('user_id', auth()->id())
+                        ->get();
+
+    return view('movies.favourites', compact('favorites'));
+
     }
 }
 

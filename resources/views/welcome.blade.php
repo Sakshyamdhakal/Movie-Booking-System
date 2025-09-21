@@ -7,6 +7,39 @@
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <script src="//unpkg.com/alpinejs" defer></script>
     <title>Movie Booking System</title>
+
+    <script>
+function toggleFavorite(movieId, currentState) {
+    @if(!Auth::check())
+        alert('Please login to add favorites!');
+        window.location.href = '{{ route("login") }}';
+        return;
+    @endif
+
+    fetch(`/movies/${movieId}/favorite`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+        },
+        body: JSON.stringify({
+            movie_id: movieId
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            console.log(data.message);
+        } else {
+            console.error('Error:', data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+}
+</script>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <style>
         .movie-card {
             background: linear-gradient(135deg, #1c1c1c 0%, #111 100%);
@@ -131,11 +164,16 @@
                 <a href="#movies" class="text-yellow-500 hover:text-yellow-600 hover:border-b font-medium transition-all pb-3">Movies</a>
                 <a href="#" class="text-yellow-500 hover:text-yellow-600 hover:border-b font-medium transition pb-3">Bookings</a>
                 <a href="#" class="text-yellow-500 hover:text-yellow-600 hover:border-b pb-3 font-medium transition">Schedule</a>
+                <a href="/favorites" class="text-yellow-500 hover:text-yellow-600 hover:border-b pb-3 font-medium transition">Favourites</a>
                 @if(Auth::check())
-                    <button class="cursor-pointer relative flex gap-1 hover:bg-gradient-to-r from-yellow-500 to-yellow-700 hover:text-black bg-black text-yellow-600 border border-yellow-400 text-black px-6 py-2 rounded-full font-semibold shadow-lg hover:shadow-xl transition transform hover:scale-105">
-                        <a href="{{route('movie.ticket')}}">Your Ticket</a>
-                        <div class="w-5 h-5 top-0 right-0 bg-yellow-600 absolute flex items-center justify-center rounded-full"> <p class="text-white">{{$totalBookings}}</p> </div>
-                    </button>
+                    <a href="{{route('movie.ticket')}}">
+                        <button class="cursor-pointer relative flex gap-1 hover:bg-gradient-to-r from-yellow-500 to-yellow-700 hover:text-black bg-black text-yellow-600 border border-yellow-400 text-black px-6 py-2 rounded-full font-semibold shadow-lg hover:shadow-xl transition transform hover:scale-105">
+                            Your Ticket
+                            <div class="w-5 h-5 top-0 right-0 bg-yellow-600 absolute flex items-center justify-center rounded-full"> 
+                                <p class="text-white"> {{$totalBookings}}</p>
+                            </div>
+                        </button>
+                    </a>
                       @if (auth()->user()->role== 'admin')
                         <a href="/dashboard" class="cursor-pointer hover:bg-gradient-to-r from-yellow-500 to-yellow-700 hover:text-black bg-black text-yellow-600 border border-yellow-400 text-black px-6 py-2 rounded-full font-semibold shadow-lg hover:shadow-xl transition transform hover:scale-105">
                             Go to Dashboard
@@ -179,24 +217,45 @@
                             </div>
                         </div>
                         <!-- Toggle Star -->
-<div x-data="{ active: false }" class="absolute right-2 top-2 cursor-pointer">
+<div x-data="{ active: @json(auth()->check() && \App\Models\Favorite::where('user_id', auth()->id())->where('movie_id', $movie->id)->exists()) }" 
+     class="absolute right-2 top-2 cursor-pointer">
     <svg 
-        @click="active = !active"
-        xmlns="http://www.w3.org/2000/svg" 
-        viewBox="0 0 24 24" 
-        :fill="active ? 'gold' : 'white'" 
-        class="w-10 h-10 transition transform hover:scale-110">
-        <path d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.518 
-        4.674a1 1 0 00.95.69h4.905c.969 
-        0 1.371 1.24.588 1.81l-3.97 
-        2.883a1 1 0 00-.364 
-        1.118l1.518 4.674c.3.922-.755 
-        1.688-1.54 1.118l-3.97-2.883a1 
-        1 0 00-1.176 0l-3.97 2.883c-.784.57-1.838-.196-1.539-1.118l1.518-4.674a1 
-        1 0 00-.364-1.118l-3.97-2.883c-.783-.57-.38-1.81.588-1.81h4.905a1 
-        1 0 00.95-.69l1.518-4.674z"/>
+        @click="
+            @if(!auth()->check())
+                alert('Please login to add favorites!');
+                window.location.href = '{{ route('login') }}';
+            @else
+                fetch('{{ route('movies.favorite', $movie->id) }}', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content,
+                        'Accept': 'application/json'
+                    }
+                })
+                .then(res => res.json())
+                .then(data => {
+                    active = data.status === 'added';
+                })
+                .catch(err => console.error(err))
+            @endif
+        "
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+        class="w-10 h-10 transition-transform hover:scale-110"
+    >
+        <path :fill="active ? 'gold' : 'white'" 
+              d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.518 
+              4.674a1 1 0 00.95.69h4.905c.969 
+              0 1.371 1.24.588 1.81l-3.97 
+              2.883a1 1 0 00-.364 
+              1.118l1.518 4.674c.3.922-.755 
+              1.688-1.54 1.118l-3.97-2.883a1 
+              1 0 00-1.176 0l-3.97 2.883c-.784.57-1.838-.196-1.539-1.118l1.518-4.674a1 
+              1 0 00-.364-1.118l-3.97-2.883c-.783-.57-.38-1.81.588-1.81h4.905a1 
+              1 0 00.95-.69l1.518-4.674z"/>
     </svg>
 </div>
+
 
                         <!-- Content -->
                         <div class="p-6">

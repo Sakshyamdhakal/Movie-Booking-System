@@ -48,6 +48,14 @@ Route::post('/movies/edit/{id}', [MovieController::class, 'updateMovie'])->name(
 Route::get('/ticket', [MovieController::class, 'showTicket'])->name('movie.ticket');
 Route::get('details/{id}', [MovieController::class, 'details'])->name('movie.details');
 
+Route::post('/movies/{id}/favorite', [MovieController::class, 'toggleFavorite'])
+    ->name('movies.favorite')
+    ->middleware('auth');
+
+Route::get('/favorites', [MovieController::class, 'favorites'])
+    ->name('movies.favorites')
+    ->middleware('auth');
+
 Route::post('/userlogin', [MovieController::class, 'userlogin'])->name('user.login');
 Route::get('/userlogin', function () {
     return view('login');
