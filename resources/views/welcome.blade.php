@@ -104,8 +104,17 @@ function toggleFavorite(movieId, currentState) {
             <h1 class="text-4xl md:text-7xl font-extrabold font-sans mb-6 floating-animation text-white drop-shadow-[0_0_20px_rgba(0,0,0,0.9)]">
             Guardians <br> of the Galaxy
         </h1>
-        <p class="text-lg md:text-xl text-gray-100 drop-shadow-[0_0_10px_black]">
-            Action | Adventure | Sci-Fi |  2018 | 2h 8m
+        <p class="text-lg md:text-xl text-gray-100 drop-shadow-[0_0_10px_black] flex gap-1 items-center">
+            Action | Adventure | Sci-Fi |
+              <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                        </svg>
+            2018 | 
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+</svg>
+
+            2h 8m
         </p>
 
         <p class="text-lg w-100 md:text-xl mb-10 text-gray-100">
@@ -152,13 +161,13 @@ function toggleFavorite(movieId, currentState) {
 
 
     <!-- Navigation -->
-    <nav class="sticky top-0 z-50 bg-gray-900 bg-opacity-95 backdrop-blur-lg shadow-lg">
-        <div class="max-w-7xl mx-auto px-4 py-4 flex flex-wrap items-center justify-between">
+<nav class="sticky top-0 z-50 bg-gray-900 bg-opacity-95 backdrop-blur-lg shadow-lg">
+    <div class=" mx-auto px-10 py-4 flex flex-wrap items-center justify-between">
             <a href="#" class="text-2xl font-bold text-yellow-400">
                 🎭 SDBS
             </a>
 
-            <form action="{{ route('landingpage') }}" class="flex-1 max-w-lg mx-8">
+            <form action="{{ route('landingpage') }}" class="flex-1 max-w-md mx-8">
                 <div class="relative">
                     <input type="search" name="search" value="{{ request('search') }}"
                            placeholder="Search amazing movies..."
@@ -173,16 +182,17 @@ function toggleFavorite(movieId, currentState) {
 
             <div class="hidden lg:flex items-center justify-center gap-6">
                 <a href="#movies" class="text-yellow-500 hover:text-yellow-600 hover:border-b font-medium transition-all pb-3">Movies</a>
-                <a href="#" class="text-yellow-500 hover:text-yellow-600 hover:border-b font-medium transition pb-3">Bookings</a>
                 <a href="#" class="text-yellow-500 hover:text-yellow-600 hover:border-b pb-3 font-medium transition">Schedule</a>
                 <a href="/favorites" class="text-yellow-500 hover:text-yellow-600 hover:border-b pb-3 font-medium transition">Favourites</a>
                 @if(Auth::check())
                     <a href="{{route('movie.ticket')}}">
                         <button class="cursor-pointer relative flex gap-1 hover:bg-gradient-to-r from-yellow-500 to-yellow-700 hover:text-black bg-black text-yellow-600 border border-yellow-400 text-black px-6 py-2 rounded-full font-semibold shadow-lg hover:shadow-xl transition transform hover:scale-105">
                             Your Ticket
-                            <div class="w-5 h-5 top-0 right-0 bg-yellow-600 absolute flex items-center justify-center rounded-full"> 
+                            @if ($totalBookings)
+                                <div class="w-5 h-5 top-0 right-0 bg-yellow-600 absolute flex items-center justify-center rounded-full"> 
                                 <p class="text-white"> {{$totalBookings}}</p>
                             </div>
+                            @endif
                         </button>
                     </a>
                       @if (auth()->user()->role== 'admin')
@@ -195,15 +205,41 @@ function toggleFavorite(movieId, currentState) {
                         Login
                     </a>
                 @endif
-                    <form action="{{ route('logout') }}" method="POST">
-                        @csrf
-                        <button type="submit" class="cursor-pointer bg-red-600 hover:text-red-500 border border-red-500 hover:bg-black text-black px-6 py-2 rounded-full font-semibold shadow-lg hover:shadow-xl transition transform hover:scale-105">
-                            Logout
+                    <div>
+                <x-dropdown align="right" width="48">
+                    <x-slot name="trigger">
+                        <button class="group inline-flex items-center px-3 py-2 border border border-yellow-400 hover:bg-gray-400 text-sm leading-4 font-medium rounded-md hover:bg-gradient-to-r from-yellow-500 to-yellow-700 hover:text-black bg-black text-yellow-600 border border-yellow-400 text-black dark:text-gray-400 cursor-pointer dark:bg-transparent focus:outline-none transition ease-in-out duration-150">
+                            <div class="text-yellow-600 group-hover:text-black">{{ Auth::user()->name }}</div>
+
+                            <div class="ms-1">
+                                <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                </svg>
+                            </div>
                         </button>
-                    </form>     
+                    </x-slot>
+
+                    <x-slot name="content">
+                        <x-dropdown-link :href="route('profile.edit')">
+                            {{ __('Profile') }}
+                        </x-dropdown-link>
+
+                        <!-- Authentication -->
+                        <form method="POST" action="{{ route('logout') }}">
+                            @csrf
+
+                            <x-dropdown-link :href="route('logout')"
+                                    onclick="event.preventDefault();
+                                                this.closest('form').submit();">
+                                {{ __('Log Out') }}
+                            </x-dropdown-link>
+                        </form>
+                    </x-slot>
+                </x-dropdown>
             </div>
         </div>
-    </nav>
+    </div>
+</nav>
 
     <!-- Movies Section -->
     <section id="movies" class="py-16 bg-black">
