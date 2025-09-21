@@ -88,7 +88,7 @@ function toggleFavorite(movieId, currentState) {
 
     <!-- Background movie poster -->
     <div class="absolute inset-0" 
-        style="background-image: url('https://collider.com/wp-content/uploads/inception_movie_poster_banner_01.jpg'); 
+        style="background-image: url('https://static.independent.co.uk/s3fs-public/thumbnails/image/2017/03/28/12/guardians-galaxy.jpg'); 
                background-size: cover; 
                background-position: center; 
                opacity: 0.25;">
@@ -100,19 +100,30 @@ function toggleFavorite(movieId, currentState) {
     </div>
 
     <!-- Content -->
-    <div class="relative z-10 max-w-7xl mx-auto px-4 py-28 text-center">
-        <h1 class="text-6xl md:text-7xl font-extrabold font-mono mb-6 floating-animation text-yellow-400 drop-shadow-[0_0_20px_rgba(0,0,0,0.9)]">
-            Book Your Favourite Movie Ticket 🎥
+    <div class="relative z-10 max-w-7xl mx-auto px-4 py-28 text-left flex flex-col gap-4">
+            <h1 class="text-4xl md:text-7xl font-extrabold font-sans mb-6 floating-animation text-white drop-shadow-[0_0_20px_rgba(0,0,0,0.9)]">
+            Guardians <br> of the Galaxy
         </h1>
-        <p class="text-xl md:text-2xl mb-10 text-gray-300 opacity-90 drop-shadow-[0_0_10px_black]">
-            Discover amazing movies and book your tickets instantly
+        <p class="text-lg md:text-xl text-gray-100 drop-shadow-[0_0_10px_black]">
+            Action | Adventure | Sci-Fi |  2018 | 2h 8m
+        </p>
+
+        <p class="text-lg w-100 md:text-xl mb-10 text-gray-100">
+            In a post-apocalyptic world where cities ride on wheels and consume each other to survive, two people meet in London and try to stop a conspiracy.
         </p>
 
         <!-- Buttons -->
-        <div class="flex justify-center gap-6">
+        <div>
             <a href="#movies" 
-               class="bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-700 hover:from-yellow-500 hover:to-yellow-800 text-black px-10 py-4 border-2 border-yellow-500 rounded-full font-bold transition-all transform hover:scale-110 shadow-lg shadow-black">
-                🎬 Explore Movies
+                class="inline-flex gap-3 bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-700 
+                        hover:from-yellow-500 hover:to-yellow-800 text-black px-10 py-4 border-2 border-yellow-500 
+                        rounded-full font-bold transition-transform duration-300 transform origin-left 
+                        hover:scale-x-105 shadow-lg shadow-black">
+                Explore Movies
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M17.25 8.25 21 12m0 0-3.75 3.75M21 12H3" />
+</svg>
+
             </a>
             @if(!Auth::check())
                 <a href="{{ route('login') }}" 
