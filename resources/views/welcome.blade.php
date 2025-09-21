@@ -21,21 +21,50 @@ function toggleFavorite(movieId, currentState) {
         headers: {
             'Content-Type': 'application/json',
             'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-        },
-        body: JSON.stringify({
-            movie_id: movieId
-        })
+        }
     })
-    .then(response => response.json())
+    .then(response => {
+        if (!response.ok) {
+            return response.json().then(err => {
+                throw new Error(err.error || 'Network response was not ok');
+            });
+        }
+        return response.json();
+    })
     .then(data => {
-        if (data.success) {
-            console.log(data.message);
-        } else {
-            console.error('Error:', data.message);
+        if (data.status === 'added') {
+            console.log('Movie added to favorites');
+            // Update button text
+            const buttonText = document.getElementById(`favorite-text-${movieId}`);
+            if (buttonText) {
+                buttonText.textContent = 'Remove Favorite';
+            }
+            // Update button background
+            const button = document.getElementById(`favorite-btn-${movieId}`);
+            if (button) {
+                button.classList.remove('bg-yellow-500', 'hover:bg-yellow-600');
+                button.classList.add('bg-red-500', 'hover:bg-red-600');
+            }
+        } else if (data.status === 'removed') {
+            console.log('Movie removed from favorites');
+            // Update button text
+            const buttonText = document.getElementById(`favorite-text-${movieId}`);
+            if (buttonText) {
+                buttonText.textContent = 'Add to Favorite';
+            }
+            // Update button background
+            const button = document.getElementById(`favorite-btn-${movieId}`);
+            if (button) {
+                button.classList.remove('bg-red-500', 'hover:bg-red-600');
+                button.classList.add('bg-yellow-500', 'hover:bg-yellow-600');
+            }
+        } else if (data.error) {
+            alert('Error: ' + data.error);
         }
     })
     .catch(error => {
-        console.error('Error:', error);
+        console.error('Error toggling favorite:', error);
+        alert('Error updating favorite status: ' + error.message + '. Please try again.');
     });
 }
 </script>
@@ -245,8 +274,8 @@ function toggleFavorite(movieId, currentState) {
     <section id="movies" class="py-16 bg-black">
         <div class="max-w-7xl mx-auto px-4">
             <div class="text-center mb-12">
-                <h2 class="text-4xl font-bold text-yellow-400 mb-4">🎬 Featured Movies</h2>
-                <p class="text-gray-300 text-lg">Choose from our amazing collection of movies</p>
+                <h2 class="text-4xl font-bold text-yellow-400 mb-4"> Featured Movies</h2>
+                <p class="text-gray-100 text-lg">Choose from our amazing collection of movies</p>
             </div>
 
             <div class="grid relative grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -263,50 +292,31 @@ function toggleFavorite(movieId, currentState) {
                                 <h3 class="text-lg font-bold">{{ $movie->name }}</h3>
                             </div>
                         </div>
-                        <!-- Toggle Star -->
-<div x-data="{ active: @json(auth()->check() && \App\Models\Favorite::where('user_id', auth()->id())->where('movie_id', $movie->id)->exists()) }" 
-     class="absolute right-2 top-2 cursor-pointer">
-    <svg 
-        @click="
-            @if(!auth()->check())
-                alert('Please login to add favorites!');
-                window.location.href = '{{ route('login') }}';
-            @else
-                fetch('{{ route('movies.favorite', $movie->id) }}', {
-                    method: 'POST',
-                    headers: {
-                        'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content,
-                        'Accept': 'application/json'
-                    }
-                })
-                .then(res => res.json())
-                .then(data => {
-                    active = data.status === 'added';
-                })
-                .catch(err => console.error(err))
-            @endif
-        "
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 0 24 24"
-        class="w-10 h-10 transition-transform hover:scale-110"
-    >
-        <path :fill="active ? 'gold' : 'white'" 
-              d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.518 
-              4.674a1 1 0 00.95.69h4.905c.969 
-              0 1.371 1.24.588 1.81l-3.97 
-              2.883a1 1 0 00-.364 
-              1.118l1.518 4.674c.3.922-.755 
-              1.688-1.54 1.118l-3.97-2.883a1 
-              1 0 00-1.176 0l-3.97 2.883c-.784.57-1.838-.196-1.539-1.118l1.518-4.674a1 
-              1 0 00-.364-1.118l-3.97-2.883c-.783-.57-.38-1.81.588-1.81h4.905a1 
-              1 0 00.95-.69l1.518-4.674z"/>
-    </svg>
-</div>
-
-
                         <!-- Content -->
                         <div class="p-6">
-                            <h3 class="text-xl font-bold text-yellow-400 mb-3 group-hover:text-yellow-300 transition">{{ $movie->name }}</h3>
+                            <div class="flex items-center justify-between mb-3">
+                                <h3 class="text-xl font-bold text-yellow-400 group-hover:text-yellow-300 transition">{{ $movie->name }}</h3>
+                                @if(Auth::check())
+                                    @php
+                                        $isFavorited = \App\Models\Favorite::where('user_id', auth()->id())->where('movie_id', $movie->id)->exists();
+                                    @endphp
+                                    <button
+                                        onclick="toggleFavorite({{ $movie->id }}, {{ $isFavorited ? 'true' : 'false' }})"
+                                        class="{{ $isFavorited ? 'bg-red-500 hover:bg-red-600' : 'bg-yellow-500 hover:bg-yellow-600' }} text-black px-3 py-1 rounded-lg font-semibold text-sm shadow-lg hover:shadow-xl transition transform hover:scale-105 flex items-center gap-2"
+                                        id="favorite-btn-{{ $movie->id }}">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-4 h-4" fill="currentColor">
+                                            <path d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.518 4.674a1 1 0 00.95.69h4.905c.969 0 1.371 1.24.588 1.81l-3.97 2.883a1 1 0 00-.364 1.118l1.518 4.674c.3.922-.755 1.688-1.54 1.118l-3.97-2.883a1 1 0 00-1.176 0l-3.97 2.883c-.784.57-1.838-.196-1.539-1.118l1.518-4.674a1 1 0 00-.364-1.118l-3.97-2.883c-.783-.57-.38-1.81.588-1.81h4.905a1 1 0 00.95-.69l1.518-4.674z"/>
+                                        </svg>
+                                        <span id="favorite-text-{{ $movie->id }}">
+                                            {{ $isFavorited ? 'Remove Favorite' : 'Add to Favorite' }}
+                                        </span>
+                                    </button>
+                                @else
+                                    <a href="{{ route('login') }}" class="bg-gray-600 hover:bg-gray-700 text-white px-3 py-1 rounded-lg font-semibold text-sm shadow-lg transition">
+                                        Login to Favorite
+                                    </a>
+                                @endif
+                            </div>
                             <p class="text-gray-300 text-sm mb-6 h-17 line-clamp-3 leading-relaxed">{{ $movie->description }}</p>
 
                             <div class="flex gap-3">

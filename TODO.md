@@ -1,5 +1,0 @@
-- [x] Update MovieController: Add edit and update methods for Newmovie, fix store to save image.
-- [x] Update resources/views/movies/edit.blade.php: Change to edit movie fields including image upload.
-- [x] Update routes/web.php: Add routes for editing movies with admin middleware.
-- [ ] Test image upload functionality.
-- [ ] Verify admin access restriction.

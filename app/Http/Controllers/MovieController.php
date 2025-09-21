@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Auth;
 use phpDocumentor\Reflection\Types\Null_;
 use App\Mail\BookingConfirmationMail;
 use App\Models\Favorite;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
 class MovieController extends Controller
@@ -234,31 +235,42 @@ class MovieController extends Controller
 
     public function toggleFavorite($movieId)
     {
+        try {
+            $userId = auth()->id();
 
-        $userId = auth()->id();
+            if (!$userId) {
+                return response()->json(['error' => 'User not authenticated'], 401);
+            }
 
-        $existing = Favorite::where('user_id', $userId)
-            ->where('movie_id', $movieId)
-            ->first();
+            $existing = Favorite::where('user_id', $userId)
+                ->where('movie_id', $movieId)
+                ->first();
 
-        if ($existing) {
-            $existing->delete();
-            return response()->json(['status' => 'removed']);
-        } else {
-            Favorite::create([
-                'user_id' => $userId,
-                'movie_id' => $movieId,
-            ]);
-            return response()->json(['status' => 'added']);
+            if ($existing) {
+                $existing->delete();
+                return response()->json(['status' => 'removed']);
+            } else {
+                Favorite::create([
+                    'user_id' => $userId,
+                    'movie_id' => $movieId,
+                ]);
+                return response()->json(['status' => 'added']);
+            }
+        } catch (\Exception $e) {
+            Log::error('Favorite toggle error: ' . $e->getMessage());
+            return response()->json(['error' => 'Internal server error'], 500);
         }
     }
 
     public function favorites()
     {
+        $userId = auth()->id();
         $favorites = Favorite::with('movie')
-            ->where('user_id', auth()->id())
+            ->where('user_id', $userId)
             ->get();
 
-        return view('movies.favourites', compact('favorites'));
+        $totalBookings = MovieBooking::where('user_id', $userId)->count();
+
+        return view('movies.favourites', compact('favorites', 'totalBookings'));
     }
 }
