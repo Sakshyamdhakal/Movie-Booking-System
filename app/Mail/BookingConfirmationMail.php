@@ -20,6 +20,7 @@ class BookingConfirmationMail extends Mailable
 
     public function build()
     {
-        return $this->view('emails.booking-confirmation');
+        return $this->view('emails.Booking_confirmation')
+                    ->with( ['booking' => $this -> booking ]);
     }
 }
