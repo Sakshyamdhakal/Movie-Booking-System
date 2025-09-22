@@ -17,6 +17,11 @@ class Newmovie extends Model
     {
         return $this->hasMany(MovieBooking::class, 'movie_id');
     }
+
+    public function favorites()
+    {
+        return $this->hasMany(Favorite::class, 'movie_id');
+    }
 }
 
 

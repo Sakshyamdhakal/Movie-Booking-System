@@ -108,6 +108,7 @@
                     <input
                         type="text"
                         id="name"
+                        value='{{$user->name}}'
                         name="name"
                         placeholder="Enter your full name"
                         class="input-field w-full px-4 py-3 rounded-lg focus:outline-none transition-all duration-300"
@@ -126,6 +127,7 @@
                     <input
                         type="email"
                         id="email"
+                        value="{{$user->email}}"
                         name="email"
                         placeholder="your.email@example.com"
                         class="input-field w-full px-4 py-3 rounded-lg focus:outline-none transition-all duration-300"

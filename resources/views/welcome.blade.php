@@ -7,6 +7,68 @@
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <script src="//unpkg.com/alpinejs" defer></script>
     <title>Movie Booking System</title>
+
+    <script>
+function toggleFavorite(movieId, currentState) {
+    @if(!Auth::check())
+        alert('Please login to add favorites!');
+        window.location.href = '{{ route("login") }}';
+        return;
+    @endif
+
+    fetch(`/movies/${movieId}/favorite`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+        }
+    })
+    .then(response => {
+        if (!response.ok) {
+            return response.json().then(err => {
+                throw new Error(err.error || 'Network response was not ok');
+            });
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.status === 'added') {
+            console.log('Movie added to favorites');
+            // Update button text
+            const buttonText = document.getElementById(`favorite-text-${movieId}`);
+            if (buttonText) {
+                buttonText.textContent = 'Remove Favorite';
+            }
+            // Update button background
+            const button = document.getElementById(`favorite-btn-${movieId}`);
+            if (button) {
+                button.classList.remove('bg-yellow-500', 'hover:bg-yellow-600');
+                button.classList.add('bg-red-500', 'hover:bg-red-600');
+            }
+        } else if (data.status === 'removed') {
+            console.log('Movie removed from favorites');
+            // Update button text
+            const buttonText = document.getElementById(`favorite-text-${movieId}`);
+            if (buttonText) {
+                buttonText.textContent = 'Add to Favorite';
+            }
+            // Update button background
+            const button = document.getElementById(`favorite-btn-${movieId}`);
+            if (button) {
+                button.classList.remove('bg-red-500', 'hover:bg-red-600');
+                button.classList.add('bg-yellow-500', 'hover:bg-yellow-600');
+            }
+        } else if (data.error) {
+            alert('Error: ' + data.error);
+        }
+    })
+    .catch(error => {
+        console.error('Error toggling favorite:', error);
+        alert('Error updating favorite status: ' + error.message + '. Please try again.');
+    });
+}
+</script>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <style>
         .movie-card {
             background: linear-gradient(135deg, #1c1c1c 0%, #111 100%);
@@ -55,7 +117,7 @@
 
     <!-- Background movie poster -->
     <div class="absolute inset-0" 
-        style="background-image: url('https://collider.com/wp-content/uploads/inception_movie_poster_banner_01.jpg'); 
+        style="background-image: url('https://static.independent.co.uk/s3fs-public/thumbnails/image/2017/03/28/12/guardians-galaxy.jpg'); 
                background-size: cover; 
                background-position: center; 
                opacity: 0.25;">
@@ -67,19 +129,39 @@
     </div>
 
     <!-- Content -->
-    <div class="relative z-10 max-w-7xl mx-auto px-4 py-28 text-center">
-        <h1 class="text-6xl md:text-7xl font-extrabold font-mono mb-6 floating-animation text-yellow-400 drop-shadow-[0_0_20px_rgba(0,0,0,0.9)]">
-            Book Your Favourite Movie Ticket 🎥
+    <div class="relative z-10 max-w-7xl mx-auto px-4 py-28 text-left flex flex-col gap-4">
+            <h1 class="text-4xl md:text-7xl font-extrabold font-sans mb-6 floating-animation text-white drop-shadow-[0_0_20px_rgba(0,0,0,0.9)]">
+            Guardians <br> of the Galaxy
         </h1>
-        <p class="text-xl md:text-2xl mb-10 text-gray-300 opacity-90 drop-shadow-[0_0_10px_black]">
-            Discover amazing movies and book your tickets instantly
+        <p class="text-lg md:text-xl text-gray-100 drop-shadow-[0_0_10px_black] flex gap-1 items-center">
+            Action | Adventure | Sci-Fi |
+              <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                        </svg>
+            2018 | 
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+</svg>
+
+            2h 8m
+        </p>
+
+        <p class="text-lg w-100 md:text-xl mb-10 text-gray-100">
+            In a post-apocalyptic world where cities ride on wheels and consume each other to survive, two people meet in London and try to stop a conspiracy.
         </p>
 
         <!-- Buttons -->
-        <div class="flex justify-center gap-6">
+        <div>
             <a href="#movies" 
-               class="bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-700 hover:from-yellow-500 hover:to-yellow-800 text-black px-10 py-4 border-2 border-yellow-500 rounded-full font-bold transition-all transform hover:scale-110 shadow-lg shadow-black">
-                🎬 Explore Movies
+                class="inline-flex gap-3 bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-700 
+                        hover:from-yellow-500 hover:to-yellow-800 text-black px-10 py-4 border-2 border-yellow-500 
+                        rounded-full font-bold transition-transform duration-300 transform origin-left 
+                        hover:scale-x-105 shadow-lg shadow-black">
+                Explore Movies
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M17.25 8.25 21 12m0 0-3.75 3.75M21 12H3" />
+</svg>
+
             </a>
             @if(!Auth::check())
                 <a href="{{ route('login') }}" 
@@ -108,13 +190,13 @@
 
 
     <!-- Navigation -->
-    <nav class="sticky top-0 z-50 bg-gray-900 bg-opacity-95 backdrop-blur-lg shadow-lg">
-        <div class="max-w-7xl mx-auto px-4 py-4 flex flex-wrap items-center justify-between">
+<nav class="sticky top-0 z-50 bg-gray-900 bg-opacity-95 backdrop-blur-lg shadow-lg">
+    <div class=" mx-auto px-10 py-4 flex flex-wrap items-center justify-between">
             <a href="#" class="text-2xl font-bold text-yellow-400">
                 🎭 SDBS
             </a>
 
-            <form action="{{ route('landingpage') }}" class="flex-1 max-w-lg mx-8">
+            <form action="{{ route('landingpage') }}" class="flex-1 max-w-md mx-8">
                 <div class="relative">
                     <input type="search" name="search" value="{{ request('search') }}"
                            placeholder="Search amazing movies..."
@@ -129,13 +211,19 @@
 
             <div class="hidden lg:flex items-center justify-center gap-6">
                 <a href="#movies" class="text-yellow-500 hover:text-yellow-600 hover:border-b font-medium transition-all pb-3">Movies</a>
-                <a href="#" class="text-yellow-500 hover:text-yellow-600 hover:border-b font-medium transition pb-3">Bookings</a>
                 <a href="#" class="text-yellow-500 hover:text-yellow-600 hover:border-b pb-3 font-medium transition">Schedule</a>
+                <a href="/favorites" class="text-yellow-500 hover:text-yellow-600 hover:border-b pb-3 font-medium transition">Favourites</a>
                 @if(Auth::check())
-                    <button class="cursor-pointer relative flex gap-1 hover:bg-gradient-to-r from-yellow-500 to-yellow-700 hover:text-black bg-black text-yellow-600 border border-yellow-400 text-black px-6 py-2 rounded-full font-semibold shadow-lg hover:shadow-xl transition transform hover:scale-105">
-                        <a href="{{route('movie.ticket')}}">Your Ticket</a>
-                        <div class="w-5 h-5 top-0 right-0 bg-yellow-600 absolute flex items-center justify-center rounded-full"> <p class="text-white">{{$totalBookings}}</p> </div>
-                    </button>
+                    <a href="{{route('movie.ticket')}}">
+                        <button class="cursor-pointer relative flex gap-1 hover:bg-gradient-to-r from-yellow-500 to-yellow-700 hover:text-black bg-black text-yellow-600 border border-yellow-400 text-black px-6 py-2 rounded-full font-semibold shadow-lg hover:shadow-xl transition transform hover:scale-105">
+                            Your Ticket
+                            @if ($totalBookings)
+                                <div class="w-5 h-5 top-0 right-0 bg-yellow-600 absolute flex items-center justify-center rounded-full"> 
+                                <p class="text-white"> {{$totalBookings}}</p>
+                            </div>
+                            @endif
+                        </button>
+                    </a>
                       @if (auth()->user()->role== 'admin')
                         <a href="/dashboard" class="cursor-pointer hover:bg-gradient-to-r from-yellow-500 to-yellow-700 hover:text-black bg-black text-yellow-600 border border-yellow-400 text-black px-6 py-2 rounded-full font-semibold shadow-lg hover:shadow-xl transition transform hover:scale-105">
                             Go to Dashboard
@@ -146,22 +234,48 @@
                         Login
                     </a>
                 @endif
-                    <form action="{{ route('logout') }}" method="POST">
-                        @csrf
-                        <button type="submit" class="cursor-pointer bg-red-600 hover:text-red-500 border border-red-500 hover:bg-black text-black px-6 py-2 rounded-full font-semibold shadow-lg hover:shadow-xl transition transform hover:scale-105">
-                            Logout
+                    <div>
+                <x-dropdown align="right" width="48">
+                    <x-slot name="trigger">
+                        <button class="group inline-flex items-center px-3 py-2 border border border-yellow-400 hover:bg-gray-400 text-sm leading-4 font-medium rounded-md hover:bg-gradient-to-r from-yellow-500 to-yellow-700 hover:text-black bg-black text-yellow-600 border border-yellow-400 text-black dark:text-gray-400 cursor-pointer dark:bg-transparent focus:outline-none transition ease-in-out duration-150">
+                            <div class="text-yellow-600 group-hover:text-black">{{ Auth::user()->name }}</div>
+
+                            <div class="ms-1">
+                                <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                </svg>
+                            </div>
                         </button>
-                    </form>     
+                    </x-slot>
+
+                    <x-slot name="content">
+                        <x-dropdown-link :href="route('profile.edit')">
+                            {{ __('Profile') }}
+                        </x-dropdown-link>
+
+                        <!-- Authentication -->
+                        <form method="POST" action="{{ route('logout') }}">
+                            @csrf
+
+                            <x-dropdown-link :href="route('logout')"
+                                    onclick="event.preventDefault();
+                                                this.closest('form').submit();">
+                                {{ __('Log Out') }}
+                            </x-dropdown-link>
+                        </form>
+                    </x-slot>
+                </x-dropdown>
             </div>
         </div>
-    </nav>
+    </div>
+</nav>
 
     <!-- Movies Section -->
     <section id="movies" class="py-16 bg-black">
         <div class="max-w-7xl mx-auto px-4">
             <div class="text-center mb-12">
-                <h2 class="text-4xl font-bold text-yellow-400 mb-4">🎬 Featured Movies</h2>
-                <p class="text-gray-300 text-lg">Choose from our amazing collection of movies</p>
+                <h2 class="text-4xl font-bold text-yellow-400 mb-4"> Featured Movies</h2>
+                <p class="text-gray-100 text-lg">Choose from our amazing collection of movies</p>
             </div>
 
             <div class="grid relative grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -178,29 +292,31 @@
                                 <h3 class="text-lg font-bold">{{ $movie->name }}</h3>
                             </div>
                         </div>
-                        <!-- Toggle Star -->
-<div x-data="{ active: false }" class="absolute right-2 top-2 cursor-pointer">
-    <svg 
-        @click="active = !active"
-        xmlns="http://www.w3.org/2000/svg" 
-        viewBox="0 0 24 24" 
-        :fill="active ? 'gold' : 'white'" 
-        class="w-10 h-10 transition transform hover:scale-110">
-        <path d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.518 
-        4.674a1 1 0 00.95.69h4.905c.969 
-        0 1.371 1.24.588 1.81l-3.97 
-        2.883a1 1 0 00-.364 
-        1.118l1.518 4.674c.3.922-.755 
-        1.688-1.54 1.118l-3.97-2.883a1 
-        1 0 00-1.176 0l-3.97 2.883c-.784.57-1.838-.196-1.539-1.118l1.518-4.674a1 
-        1 0 00-.364-1.118l-3.97-2.883c-.783-.57-.38-1.81.588-1.81h4.905a1 
-        1 0 00.95-.69l1.518-4.674z"/>
-    </svg>
-</div>
-
                         <!-- Content -->
                         <div class="p-6">
-                            <h3 class="text-xl font-bold text-yellow-400 mb-3 group-hover:text-yellow-300 transition">{{ $movie->name }}</h3>
+                            <div class="flex items-center justify-between mb-3">
+                                <h3 class="text-xl font-bold text-yellow-400 group-hover:text-yellow-300 transition">{{ $movie->name }}</h3>
+                                @if(Auth::check())
+                                    @php
+                                        $isFavorited = \App\Models\Favorite::where('user_id', auth()->id())->where('movie_id', $movie->id)->exists();
+                                    @endphp
+                                    <button
+                                        onclick="toggleFavorite({{ $movie->id }}, {{ $isFavorited ? 'true' : 'false' }})"
+                                        class="{{ $isFavorited ? 'bg-red-500 hover:bg-red-600' : 'bg-yellow-500 hover:bg-yellow-600' }} text-black px-3 py-1 rounded-lg font-semibold text-sm shadow-lg hover:shadow-xl transition transform hover:scale-105 flex items-center gap-2"
+                                        id="favorite-btn-{{ $movie->id }}">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-4 h-4" fill="currentColor">
+                                            <path d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.518 4.674a1 1 0 00.95.69h4.905c.969 0 1.371 1.24.588 1.81l-3.97 2.883a1 1 0 00-.364 1.118l1.518 4.674c.3.922-.755 1.688-1.54 1.118l-3.97-2.883a1 1 0 00-1.176 0l-3.97 2.883c-.784.57-1.838-.196-1.539-1.118l1.518-4.674a1 1 0 00-.364-1.118l-3.97-2.883c-.783-.57-.38-1.81.588-1.81h4.905a1 1 0 00.95-.69l1.518-4.674z"/>
+                                        </svg>
+                                        <span id="favorite-text-{{ $movie->id }}">
+                                            {{ $isFavorited ? 'Remove Favorite' : 'Add to Favorite' }}
+                                        </span>
+                                    </button>
+                                @else
+                                    <a href="{{ route('login') }}" class="bg-gray-600 hover:bg-gray-700 text-white px-3 py-1 rounded-lg font-semibold text-sm shadow-lg transition">
+                                        Login to Favorite
+                                    </a>
+                                @endif
+                            </div>
                             <p class="text-gray-300 text-sm mb-6 h-17 line-clamp-3 leading-relaxed">{{ $movie->description }}</p>
 
                             <div class="flex gap-3">
