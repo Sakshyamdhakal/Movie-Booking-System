@@ -154,16 +154,6 @@
                 <h2 class="text-4xl font-bold text-yellow-400 mb-4">⭐ Your Favorite Movies</h2>
                 <p class="text-gray-100 text-lg">Your personally curated collection of amazing movies</p>
 
-                <!-- Back Button -->
-                <div class="mt-6">
-                    <a href="{{ route('landingpage') }}"
-                       class="inline-flex items-center gap-3 bg-gray-800 hover:bg-gray-700 text-yellow-400 px-6 py-3 rounded-full font-semibold transition transform hover:scale-105 shadow-lg">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
-                        </svg>
-                        Back to Movies
-                    </a>
-                </div>
             </div>
 
             @if($favorites->isEmpty())

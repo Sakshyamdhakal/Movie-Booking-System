@@ -2,20 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Events\EventsManager;
 use App\Events\UserLoggedIn;
 use Illuminate\Http\Request;
-use App\Models\Movie;
 use App\Models\Newmovie;
 use App\Models\MovieBooking;
 use App\Models\Userlogin;
-use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
-use phpDocumentor\Reflection\Types\Null_;
 use App\Mail\BookingConfirmationMail;
 use App\Models\Favorite;
-use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
