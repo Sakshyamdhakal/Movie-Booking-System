@@ -5,7 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title>{{ config('app.name', 'Laravel') }}</title>
+        <title>{{ config('app.name', 'Movie Booking System') }}</title>
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
@@ -16,7 +16,9 @@
     </head>
     <body class="font-sans antialiased">
         <div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-            @include('layouts.navigation')
+            @if (Auth::user()->role === 'admin')
+                @include('layouts.navigation')
+            @endif
 
             <!-- Page Heading -->
             @isset($header)
@@ -30,6 +32,9 @@
             <!-- Page Content -->
             <main>
                 {{ $slot }}
+                <div class="inline-flex items-center justify-center bg-gray-900 text-white mx-60 mb-5 px-5 rounded-md py-3">
+                    <a href="/">Go Back</a>
+                </div>
             </main>
         </div>
     </body>
