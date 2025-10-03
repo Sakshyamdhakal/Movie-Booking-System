@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Favorite extends Model
 {
-    protected $fillables = ['user_id', 'movie_id'];
+    protected $fillable = ['user_id', 'movie_id'];
 
     public function user() {
         return $this->belongsTo(User::class);
