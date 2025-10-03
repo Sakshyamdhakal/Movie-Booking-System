@@ -2,17 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Events\EventsManager;
 use App\Events\UserLoggedIn;
 use Illuminate\Http\Request;
-use App\Models\Movie;
 use App\Models\Newmovie;
 use App\Models\MovieBooking;
 use App\Models\Userlogin;
-use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
-use phpDocumentor\Reflection\Types\Null_;
 use App\Mail\BookingConfirmationMail;
 use App\Models\Favorite;
 use Illuminate\Support\Facades\Log;
@@ -29,7 +25,6 @@ class MovieController extends Controller
 
         $user = Auth::user();
         $userId = auth()->id();
-        $today = \Carbon\Carbon::today();
         $totalBookings = MovieBooking::where('user_id', $userId)->count();
         $query = Newmovie::query();
 
@@ -122,7 +117,7 @@ class MovieController extends Controller
             'user_id'  => auth()->id(),
         ]);
         //pending
-        // Mail::to($booking->email)->send(new BookingConfirmationMail($booking));
+        Mail::to($booking->email)->queue(new BookingConfirmationMail($booking));
 
         return redirect()->route('movie.confirm', ['bookingid' => $booking->id]);
     }
