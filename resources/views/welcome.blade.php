@@ -200,7 +200,7 @@ function toggleFavorite(movieId, currentState) {
                 <div class="relative">
                     <input type="search" name="search" value="{{ request('search') }}"
                            placeholder="Search amazing movies..."
-                           class="w-full bg-black border border-yellow-500 text-yellow-300 rounded-full py-3 px-10 pr-12 focus:outline-none focus:border-yellow-400 focus:ring-2 focus:ring-yellow-400 transition-all duration-500" />
+                           class="w-full bg-black border border-yellow-500 text-white rounded-full py-3 px-10 pr-12 focus:outline-none focus:border-yellow-400 focus:ring-2 focus:ring-yellow-400 transition-all duration-500" />
                     <button type="submit" class="absolute right-3 top-1/2 transform -translate-y-1/2 text-yellow-300 hover:text-yellow-400">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
