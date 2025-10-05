@@ -9,7 +9,7 @@ class MovieBooking extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['movie_id','movie', 'name', 'email', 'seats', 'user_id'];
+    protected $fillable = ['movie_id','movie', 'name', 'email', 'seats', 'user_id', 'date'];
     protected $table = 'movie_bookings';
 
     public function movie()

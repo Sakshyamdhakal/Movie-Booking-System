@@ -11,14 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('userlogins', function (Blueprint $table) {
-    $table->id();
-    $table->string('name');
-    $table->string('email')->unique();
-    $table->string('password');
-    $table->timestamps();
-});
-
+        Schema::table('movie_bookings', function (Blueprint $table) {
+            $table->date('date')->nullable();
+        });
     }
 
     /**
@@ -26,6 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('userlogin');
+        Schema::table('movie_bookings', function (Blueprint $table) {
+            $table->date('date');
+        });
     }
 };

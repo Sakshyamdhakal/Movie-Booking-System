@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use App\Mail\BookingConfirmationMail;
 use App\Models\Favorite;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
@@ -25,7 +26,9 @@ class MovieController extends Controller
 
         $user = Auth::user();
         $userId = auth()->id();
-        $totalBookings = MovieBooking::where('user_id', $userId)->count();
+        $totalBookings = MovieBooking::where('user_id', $userId)
+            ->whereDate('date', Carbon::now())
+            ->count();
         $query = Newmovie::query();
 
         if ($request->has('search')) {
@@ -93,9 +96,9 @@ class MovieController extends Controller
     // Show the booking form for a movie
     public function showForm($movieid)
     {
-        $user = Auth::user() ;
+        $user = Auth::user();
         $movie = Newmovie::findOrFail($movieid);
-        return view('movies.book', compact('movie','user'));
+        return view('movies.book', compact('movie', 'user'));
     }
 
     public function storeUserdetails(Request $request, $movieid)
@@ -115,6 +118,7 @@ class MovieController extends Controller
             'movie_id' => $movieid,
             'movie'    => $movie->name,
             'user_id'  => auth()->id(),
+            'date' =>  now(),
         ]);
         //pending
         Mail::to($booking->email)->queue(new BookingConfirmationMail($booking));
@@ -264,7 +268,9 @@ class MovieController extends Controller
             ->where('user_id', $userId)
             ->get();
 
-        $totalBookings = MovieBooking::where('user_id', $userId)->count();
+        $totalBookings = MovieBooking::where('user_id', $userId)
+            ->whereDate('date', Carbon::today())
+            ->count();
 
         return view('movies.favourites', compact('favorites', 'totalBookings'));
     }
