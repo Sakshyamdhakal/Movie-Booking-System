@@ -6,7 +6,7 @@ use App\Events\UserLoggedIn;
 use Illuminate\Http\Request;
 use App\Models\Newmovie;
 use App\Models\MovieBooking;
-use App\Models\Userlogin;
+use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use App\Mail\BookingConfirmationMail;
@@ -25,7 +25,7 @@ class MovieController extends Controller
         }
 
         $user = Auth::user();
-        $userId = auth()->id();
+        $userId = $user->id;
         $totalBookings = MovieBooking::where('user_id', $userId)
             ->whereDate('date', Carbon::now())
             ->count();
@@ -64,19 +64,18 @@ class MovieController extends Controller
             $data['image'] = $imageName;
         }
 
-        NewMovie::create($data);
+        Newmovie::create($data);
         return redirect('/')->with('success', 'Movie added successfully!');
     }
 
     public function show(Request $request)
     {
-        $addmovie = NewMovie::all();
+        $addmovie = Newmovie::all();
         return view('welcome', compact('addmovie'));
     }
 
     public function showdashboard()
     {
-        Auth::user()->role;
         if (!Auth::check() || auth()->user()->role !== 'admin') {
             return redirect('/')->with('error', 'Access Denied.');
         }
@@ -96,6 +95,9 @@ class MovieController extends Controller
     // Show the booking form for a movie
     public function showForm($movieid)
     {
+        if (!Auth::check()) {
+            return redirect()->route('login');
+        }
         $user = Auth::user();
         $movie = Newmovie::findOrFail($movieid);
         return view('movies.book', compact('movie', 'user'));
@@ -134,30 +136,14 @@ class MovieController extends Controller
 
     public function showTicket()
     {
+        if (!Auth::check()) {
+            return redirect()->route('login');
+        }
         $bookings = MovieBooking::where('user_id', auth()->id())->latest()->get();
         return view('movies.user_bookings', compact('bookings'));
     }
 
-    public function userlogin(Request $request)
-    {
-        $data = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:userlogin',
-            'password' => 'required|string|min:6',
-        ]);
 
-        $user = userlogin::create([
-            'name' => $data['name'],
-            'email' => $data['email'],
-            'password' => Hash::make($data['password']),
-            'role' => 'user',
-        ]);
-
-        Auth::login($user);
-        $user = Auth::user();
-        event(new UserLoggedIn($user));
-        return redirect('/')->with('success', 'Account created!');
-    }
 
     public function destroyBooking($bookingId)
     {
@@ -165,25 +151,6 @@ class MovieController extends Controller
         $booking->delete();
 
         return redirect()->route('landingpage')->with('success', 'Booking Cancelled.');
-    }
-
-
-
-    public function edit(MovieBooking $booking)
-    {
-        return view('movies.edit', compact('booking'));
-    }
-
-    public function update(Request $request, MovieBooking $bookingid)
-    {
-        $data = $request->validate([
-            'name' => 'required',
-            'email' => 'required|email',
-            'seats' => 'required|integer|min:1'
-        ]);
-        $bookingid->update($data);
-
-        return redirect()->route('movies.confirm');
     }
 
     public function editMovie($id)
@@ -263,6 +230,9 @@ class MovieController extends Controller
 
     public function favorites()
     {
+        if (!Auth::check()) {
+            return redirect()->route('login');
+        }
         $userId = auth()->id();
         $favorites = Favorite::with('movie')
             ->where('user_id', $userId)
