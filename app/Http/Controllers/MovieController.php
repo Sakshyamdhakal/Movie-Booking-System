@@ -24,8 +24,7 @@ class MovieController extends Controller
             return redirect()->route('login');
         }
 
-        $user = Auth::user();
-        $userId = $user->id;
+        $userId = Auth::id();
         $totalBookings = MovieBooking::where('user_id', $userId)
             ->whereDate('date', Carbon::now())
             ->count();
@@ -76,7 +75,7 @@ class MovieController extends Controller
 
     public function showdashboard()
     {
-        if (!Auth::check() || auth()->user()->role !== 'admin') {
+        if (!Auth::check() || Auth::user()->role !== 'admin') {
             return redirect('/')->with('error', 'Access Denied.');
         }
 
@@ -119,7 +118,7 @@ class MovieController extends Controller
             'seats'    => $request->seats,
             'movie_id' => $movieid,
             'movie'    => $movie->name,
-            'user_id'  => auth()->id(),
+            'user_id'  => Auth::id(),
             'date' =>  now(),
         ]);
         //pending
@@ -139,7 +138,7 @@ class MovieController extends Controller
         if (!Auth::check()) {
             return redirect()->route('login');
         }
-        $bookings = MovieBooking::where('user_id', auth()->id())->latest()->get();
+        $bookings = MovieBooking::where('user_id', Auth::id())->latest()->get();
         return view('movies.user_bookings', compact('bookings'));
     }
 
@@ -155,7 +154,7 @@ class MovieController extends Controller
 
     public function editMovie($id)
     {
-        if (!Auth::check() || auth()->user()->role !== 'admin') {
+        if (!Auth::check() || Auth::user()->role !== 'admin') {
             return redirect('/')->with('error', 'Access Denied.');
         }
         $movie = Newmovie::findOrFail($id);
@@ -164,7 +163,7 @@ class MovieController extends Controller
 
     public function updateMovie(Request $request, $id)
     {
-        if (!Auth::check() || auth()->user()->role !== 'admin') {
+        if (!Auth::check() || Auth::user()->role !== 'admin') {
             return redirect('/')->with('error', 'Access Denied.');
         }
         $request->validate([
@@ -202,7 +201,7 @@ class MovieController extends Controller
     public function toggleFavorite($movieId)
     {
         try {
-            $userId = auth()->id();
+            $userId = Auth::id();
 
             if (!$userId) {
                 return response()->json(['error' => 'User not authenticated'], 401);
@@ -233,7 +232,7 @@ class MovieController extends Controller
         if (!Auth::check()) {
             return redirect()->route('login');
         }
-        $userId = auth()->id();
+        $userId = Auth::id();
         $favorites = Favorite::with('movie')
             ->where('user_id', $userId)
             ->get();
